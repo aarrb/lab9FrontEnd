@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="navbar.css">
     <title>Search ducks</title>   
+      <script src="configuration.js"></script>
   </head>
   <body>
     <ul class="topnav">
@@ -31,16 +32,26 @@
     <script>
       let ducks = [];
 
-      async function getAll() {
-        let host = "http://localhost:8080";
-        return fetch(host + "/ducks")
-          .then((response) => response.json())
+    async function getAll() {
+        let host = configuration.host();
+        const headers = { 'Authorization': `Bearer ${configuration.token()}` };
+
+        return fetch(host + "/ducks", { headers })
+          .then((response) => {
+            if (response.status === 401) {
+              logout();
+              // You might want to throw an error here or handle the 401 status in another way
+              throw new Error('Unauthorized access, logging out.');
+            }
+            return response.json();
+          })
           .catch((error) => {
             console.log(error);
             alert("Something went wrong!");
             return [];
           });
       }
+
 
       async function search() {
         if (ducks.length == 0) {

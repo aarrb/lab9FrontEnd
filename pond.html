@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="pond.css">
     <title>The pond</title>    
   </head>
+  <script src="configuration.js"></script>
   <body>
     <ul class="topnav">
       <li><a class="active" href="index.html">Home</a></li>
@@ -19,12 +20,14 @@
     <div id="pond"></div>
 
     <script>
-      let host = "http://localhost:8080";
+      let host = getHost();
       let ducks = [];
       displayTheDucks();
 
       async function getAll() {
-        let response = await fetch(host + "/ducks");
+        const headers = { 'Authorization': `Bearer ${configuration.token()}` };
+        let response = await fetch(host + "/ducks", { headers });
+
         let result = await response.json();
         return result;
       }
